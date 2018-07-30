@@ -1,0 +1,9 @@
+Subject: How R U?
+Hi {{First Name}},
+
+ You are {{Age}} years old. Congratulations! 
+
+ When will be our next metting in {{Location}}?
+
+ Kind regards,
+ Pymail
