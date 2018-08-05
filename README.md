@@ -1,4 +1,4 @@
-# [![PyMail](imgs/pymail_logo.svg)][1] PyMail
+# [![PyMail](imgs/pymail_logo.png)][1] PyMail
 
 Programa totalmente desenvolvido em Python 2.7.x destinado ao envio de 
 mala direta digital. Ou seja, o envio de e-mails padronizados e
@@ -6,7 +6,7 @@ personalizado para um grande número de pessoas, podendo anexar diferentes
 arquivos para cada destinatário.
 
 <p align="center">
-  <img src="imgs/pymail.svg">
+  <img src="imgs/pymail.png">
 </p>
 
 ## Como funciona?
