@@ -25,6 +25,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from csv import read_csv, read_ini
 from bar import ProgressBar
+from myHtml import html
 
 
 class PyMail:
@@ -380,10 +381,7 @@ class PyMail:
     def create_email_html(self, e_id, nEmails, email):
         data = self.get_data_from_email(email)
         path = self.path_emails_
-
-        with open('html.dll', 'r') as f:
-            html = f.read()
-
+        
         filename = os.path.join(path, 'email_%03d.html' % e_id)
 
         if (os.path.exists(path)):

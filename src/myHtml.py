@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html = """<!DOCTYPE html>
 <html>
 
 <head>
@@ -51,3 +51,4 @@ a.header:hover {{
 
 </body>
 </html>
+"""
