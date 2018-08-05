@@ -1,0 +1,5 @@
+E-mail;Bcc;Subject;Nome(Artigo);Nome;Valor;Retirada;Attachments
+teste1@pymail.com;bcopy1@pymail.com;Saque Imediato;o;Eduardo;"R$ 2200,00";11/02/2019;"extratos/extrato_1.pdf"
+teste2@pymail.com;bcopy2@pymail.com;Saque Imediato;a;Rafaela;"R$ 3400,00";22/09/2018;"extratos/extrato_2.png"
+teste3@pymail.com;bcopy3@pymail.com;Saque Imediato;o;Marcelo;"R$ 4300,00";04/07/2019;"extratos/extrato_3.jpg"
+teste4@pymail.com;bcopy4@pymail.com;Saque Imediato;o;Vicente;"R$ 1900,00";17/08/2018;"extratos/extrato_4.gif"

@@ -1,0 +1,5 @@
+E-mail;Nome;Produto;Quantidade;Armazenamento
+teste1@pymail.com;Eduardo;refrigerante;2 garrafas;"local refrigerado"
+teste2@pymail.com;Rafaela;biscoito;9 pacotes;"temperatura ambiente"
+teste3@pymail.com;Marcelo;mortadela;500 g;"local refrigerado"
+teste4@pymail.com;Vicente;pão;8 sacolas;"local aquecido"

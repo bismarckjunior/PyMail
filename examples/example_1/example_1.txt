@@ -1,0 +1,8 @@
+Prezad{{Nome(Artigo)}} {{Nome}},
+
+  Você já possui {{Valor}} na sua conta e deve retirá-lo até o dia {{Retirada}}.
+
+  Segue em anexo o seu extrato.
+  
+At.te,
+PyMail

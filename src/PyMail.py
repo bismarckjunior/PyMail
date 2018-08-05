@@ -1,6 +1,22 @@
 #-*-coding: utf-8-*-
-# Author: Bismarck Gomes Souza Junior <bismarckgomes@gmail.com>
-# Class for sending bulk e-mails
+"""
+Copyright [2018] [Souza Jr, B. G.]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: Bismarck Gomes Souza Junior <bismarckgomes@gmail.com>
+About:  Class for sending bulk e-mails
+"""
 import os, re, sys, cgi, webbrowser
 from smtplib import SMTP
 from email.mime.text import MIMEText
@@ -14,20 +30,20 @@ from bar import ProgressBar
 class PyMail:
 
     smtp_ = { 'gmail':   {'port': 587, 'host':"smtp.gmail.com"},
-              'outlook': {'port': 587, 'host':"smtp-mail.outlook.com"}}
-    extensions_ = {'images': ['jpg', 'jpeg', 'png'],
-                   'docs':   ['txt', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 
-                              'csv', 'ptt', 'pttx', 'html', 'md']}
+              'outlook': {'port': 587, 'host':"smtp-mail.outlook.com"},
+              'pymail':  {'port': 587, 'host':"smtp.pymail.com"}}
+    extensions_ = {'images': ['jpg', 'jpeg', 'png', 'gif']}
 
-    def __init__(self, user, username=None, password=None, type_msg="plain"):
+    def __init__(self, user, username=None, password=None, type_msg="plain",
+        output=True):
         self.user_ = user
         self.password_ = password
         self.username_ = user if (username is None) else username
         self.type_msg_ = type_msg
         self.server_ = None
         self.emails_ = []
-        self.path_emails_ = './html'
-        self.path_ = './'
+        self.output_ = output
+        self.set_path("./")
 
     def __del__(self):
         if (self.server_ is not None):
@@ -87,8 +103,13 @@ class PyMail:
 
         print
 
+    def set_path(self, path):
+        self.path_ = path
+        self.path_emails_ = os.path.join(path, 'html')
+
     def run(self, status, cmd, *args, **kwargs):
-        print " {0:<16s}".format(status),
+        if (self.output_):
+            print " {0:<16s}".format(status),
         
         try:
             cmd(*args, **kwargs)
@@ -98,11 +119,13 @@ class PyMail:
             msg = e.args[1]
             if (len(msg) > 40):
                 msg = msg[:40] + '...'
-            print "[ERROR %d]: %s" % (n, msg)
+            if (self.output_):
+                print "[ERROR %d]: %s" % (n, msg)
             return False
 
         else:
-            print "[OK]"
+            if (self.output_):
+                print "[OK]"
 
         return True
 
@@ -111,7 +134,9 @@ class PyMail:
         self.run("Disconnecting...", self.__disconnect)
 
     def connect(self):
-        print "\n Accessing...     [%s]" % self.user_
+        if (self.output_):
+            print "\n Accessing...     [%s]" % self.user_
+
         return self.run("Connecting...", self.__connect)
 
     def attach_to_email(self, email, filename):
@@ -129,20 +154,15 @@ class PyMail:
         if (ext in self.extensions_['images']):
             email.attach(MIMEImage(data, name=basename))
 
-        elif (ext in self.extensions_['docs']):
+        else:
             att = MIMEApplication(data)
             att.add_header('Content-Disposition', 'attachment', filename=basename)
             email.attach(att)
 
-        else:
-            raise Exception(85, "Invalid attachment file (%s)" % basename)
-
         if (not hasattr(email, 'attachs_path_')):
             email.attachs_path_ = {}
 
-        path = os.path.join(os.path.dirname(full_path), "..")
-        path = os.path.join(path, basename)
-        email.attachs_path_[basename] = path
+        email.attachs_path_[basename] = os.path.relpath(full_path, self.path_emails_)
 
     def send_email(self, to, msg, subject=None, cc="", bcc="", attachs=[]):
         
@@ -152,13 +172,12 @@ class PyMail:
 
     def send_mass_email(self, msg, csv_file, subject=None,
         key_to="E-mail", key_cc="Cc", key_bcc="Bcc",
-        key_subject="Subject", key_attach="Attachments"):
+        key_subject="Subject", key_attach="Attachments", verify=False):
 
         msg, subject = self.get_msg_and_subject(msg, subject)
         csv = read_csv(os.path.join(self.path_, csv_file))
 
-        # try:
-        if (True):
+        try:
             # Check recipient
             if (key_to not in csv):
                 raise Exception(116, "Column \"%s\" with e-mails not found" % key_to)
@@ -173,12 +192,13 @@ class PyMail:
                                    key_subject, key_attach)
 
             # Check e-mails
-            webbrowser.open(os.path.join(self.path_emails_, 'email_001.html'))
+            if (verify):
+                webbrowser.open(os.path.join(self.path_emails_, 'email_001.html'))
 
-            # Continue?
-            if ( raw_input('\nDo you want to send created e-mails? [y/N] ') != 'y' ):
-                print '\nAborted!'
-                return
+                # Continue?
+                if ( raw_input('\nDo you want to send created e-mails? [y/N] ') != 'y' ):
+                    print '\nAborted!'
+                    return  
 
             # Connect to server
             if (not self.connect()):
@@ -190,8 +210,8 @@ class PyMail:
             # Disconnect
             self.disconnect()
 
-        # except Exception as e:
-        #     print "[ERROR %d]: %s" % e.args
+        except Exception as e:
+            print "[ERROR %d]: %s" % e.args
 
     def create_emails(self, msg, csv, subject=None,
         key_to="E-mail", key_cc="Cc", key_bcc="Bcc",
@@ -320,16 +340,14 @@ class PyMail:
         return pwd
 
     def get_msg_and_subject(self, msg, subject):
+        msg_file = os.path.join(self.path_, msg)
 
-        if (os.path.exists(msg)):
-            if (msg.endswith('.html')):
+        if (os.path.exists(msg_file)):
+            if (msg_file.endswith('.html')):
                 self.type_msg_ = "html"
 
-            self.path_ = os.path.dirname(msg)
-            self.path_emails_ = os.path.join(self.path_, 'html')
-            with open(msg, 'r') as f:
+            with open(msg_file, 'r') as f:
                 lines = f.readlines()
-
                 pos = lines[0].find('Subject:')
                 if (pos>=0):
                     if (subject is None): 
@@ -357,10 +375,6 @@ class PyMail:
 
         print "\n---\n\n%s\n" % data['msg']
         print '='*80
-
-        # print '*'*80
-        # print email.as_string()
-        # print '*'*80
         print
 
     def create_email_html(self, e_id, nEmails, email):
@@ -415,7 +429,7 @@ class PyMail:
             msg = data['msg']
 
             if (self.type_msg_ == "plain"):
-                msg = cgi.escape(msg).replace("\n", "<br>")
+                msg = cgi.escape(msg)#.replace("\n", "<br>")
 
             h = html.format(e_id, nEmails, page_1, sts_1, page_b, sts_b, main, 
                             page_a, sts_a, page_n, sts_n, 
@@ -427,9 +441,9 @@ class PyMail:
 
 if __name__ == '__main__':
     
-    print '='*50
-    print '         PyMail 0.1 <www.goo.gl/TDpSQC>'
-    print '='*50
+    print '='*70
+    print '                   PyMail 0.1 <www.goo.gl/TDpSQC>'
+    print '='*70
     try:
         if len(sys.argv) > 1:
             ini_file = sys.argv[1]
@@ -439,25 +453,23 @@ if __name__ == '__main__':
             print 'Arraste uma arquivo ".ini" para o este script.'
             print 'Exemplo:'
             print '  [Settings]'
-            print '  user     = "email@gmail.com"'
-            print '  username = "Seu Nome"'
+            print '  user     = "pymail@pymail.com"'
+            print '  username = "PyMail"'
             print '  msg_file = "Email.txt"'
             print '  csv_file = "Email.csv"\n'
 
-            eg_file = "../example/Emails.ini"
-            run = raw_input('Run exemple "%s"? [y/N] ' % eg_file)
+            eg_file = "../examples/example_1/example_1.ini"
+            run = raw_input('Run exemple "%s"? [Y/n] ' % eg_file)
             
-            ini_file = None if (run != 'y') else eg_file
+            ini_file = eg_file if (run != 'n') else None
 
         if (ini_file):
             ini = read_ini(ini_file)
             d = ini['Settings']
             pwd = d['password'] if 'password' in d else None
-            path = os.path.dirname(ini_file)
             mail = PyMail(d['user'], d['username'], pwd)
-            msg_file = os.path.join(path, d['msg_file'])
-            csv_file = os.path.join(path, d['csv_file'])
-            mail.send_mass_email(msg_file, csv_file)
+            mail.set_path(os.path.dirname(ini_file))
+            mail.send_mass_email(d['msg_file'], d['csv_file'], verify=True)
 
     except:
         print sys.exc_info()[0]
@@ -465,6 +477,6 @@ if __name__ == '__main__':
         print traceback.format_exc()
 
     finally:
-        print '='*50
+        print '='*70
         raw_input('\nPress enter to close...')
         

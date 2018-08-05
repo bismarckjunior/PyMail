@@ -1,0 +1,10 @@
+Subject: Equipe {{Equipe}} - Apresente-se!
+
+Prezada Equipe {{Equipe}},
+
+Já chegou o tão esperado momento. 
+
+Pedimos para que se apresentem no dia {{Data}} na unidade {{Unidade}}.
+
+Atenciosamente,
+PyMail
