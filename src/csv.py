@@ -18,7 +18,6 @@ Author: Bismarck Gomes Souza Junior <bismarckgomes@gmail.com>
 About:   Functions that read and write csv files
 """
 import re, ast
-import numpy as np
 
 
 # CSV FILE FUNCTIONS ==========================================================#
@@ -61,7 +60,11 @@ def read_raw_csv(filename, skip_rows=0):
     with open(filename, 'r') as f:
         for line in f.readlines()[skip_rows:]:
             row = []
-            for val, s in  re.findall(r"\s*((['\"])?.*?(?(2)\2))(?:[,;]|\n)", line):
+            founds1 = re.findall(r"\s*((['\"])?.*?(?(2)\2))(?:;|\n)", line)
+            founds2 = re.findall(r"\s*((['\"])?.*?(?(2)\2))(?:,|\n)", line)
+            founds = founds1 if len(founds1)>=len(founds2) else founds2
+
+            for val, s in founds:
                 try:
                     val = ast.literal_eval(val)
                 except:
@@ -127,9 +130,9 @@ def read_ini(filename):
 
     with open(filename, 'r') as f:
                                       
-        for sec, data in re.findall(r"\[\s*(.+?)\s*\].*?\n(.*?)(?=\[|$)", f.read(), re.DOTALL):
+        for sec, data in re.findall(r"\s*\[\s*(.+?)\s*\].*?\n(.*?)(?=\n\[|$)", f.read(), re.DOTALL):
             d[sec] = {}
-            for key, value in re.findall(r"\s*(.+?)\s*=\s*(.+?)\s*(?=\n|$)", data):
+            for key, value, s in re.findall(r"^\s*([^#]+?)\s*=\s*((['\"])?.*?(?(3)\3))\s*(?:#.*)?(?=$)", data, re.MULTILINE):
                 try:
                     value = ast.literal_eval(value)
                 except:
