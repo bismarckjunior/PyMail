@@ -111,7 +111,7 @@ class PyMail:
     def run(self, status, cmd, *args, **kwargs):
         if (self.output_):
             print " {0:<16s}".format(status),
-        
+
         try:
             cmd(*args, **kwargs)
 
@@ -131,7 +131,7 @@ class PyMail:
         return True
 
     def disconnect(self):
-        
+
         self.run("Disconnecting...", self.__disconnect)
 
     def connect(self):
@@ -166,7 +166,7 @@ class PyMail:
         email.attachs_path_[basename] = os.path.relpath(full_path, self.path_emails_)
 
     def send_email(self, to, msg, subject=None, cc="", bcc="", attachs=[]):
-        
+
         cmd = lambda: self.__send_email(to, msg, subject, cc, bcc, attachs)
 
         self.run("Sending...", cmd)
@@ -199,12 +199,12 @@ class PyMail:
                 # Continue?
                 if ( raw_input('\nDo you want to send created e-mails? [y/N] ') != 'y' ):
                     print '\nAborted!'
-                    return  
+                    return
 
             # Connect to server
             if (not self.connect()):
                 return
-            
+
             # Send mass email
             self.__send_mass_email()
 
@@ -217,7 +217,7 @@ class PyMail:
     def create_emails(self, msg, csv, subject=None,
         key_to="E-mail", key_cc="Cc", key_bcc="Bcc",
         key_subject="Subject", key_attach="Attachments"):
-        
+
         self.emails_ = []
 
         # Check subject
@@ -282,7 +282,7 @@ class PyMail:
                  'Bcc':     email['Bcc'] if email['Bcc'] else ''}
 
         if (self.user_ == self.username_):
-            data['From'] = email['From'] 
+            data['From'] = email['From']
         else:
             data['From'] = "%s <%s>" % (self.username_, self.user_)
 
@@ -303,7 +303,7 @@ class PyMail:
                     break
             if d:
                 pieces.append(d)
-        
+
         # Join pieces
         for piece in pieces:
             ctype = piece['Content-Type']
@@ -328,10 +328,10 @@ class PyMail:
 
         try:
             import Tkinter, tkSimpleDialog
-            root = Tkinter.Tk() 
-            root.withdraw() 
-            pwd = tkSimpleDialog.askstring("Password", 
-                                           "E-mail: %s\n\nEnter password:" % self.user_, 
+            root = Tkinter.Tk()
+            root.withdraw()
+            pwd = tkSimpleDialog.askstring("Password",
+                                           "E-mail: %s\n\nEnter password:" % self.user_,
                                            show='*', parent=root)
             root.destroy()
         except:
@@ -351,7 +351,7 @@ class PyMail:
                 lines = f.readlines()
                 pos = lines[0].find('Subject:')
                 if (pos>=0):
-                    if (subject is None): 
+                    if (subject is None):
                         subject = lines[0][pos+8:].strip()
 
                     msg = "".join(lines[1:]).strip()
@@ -370,7 +370,7 @@ class PyMail:
         print "{:12s} {:s}".format('Subject:', data['Subject'])
         if data['Cc']: print "{:12s} {:s}".format('Cc:', data['Cc'])
         if data['Bcc']: print "{:12s} {:s}".format('Bcc:', data['Bcc'])
-        
+
         if (data['attachments']):
             print "{:12s} {:s}".format('Attachments:', str(data['attachments']))
 
@@ -381,7 +381,7 @@ class PyMail:
     def create_email_html(self, e_id, nEmails, email):
         data = self.get_data_from_email(email)
         path = self.path_emails_
-        
+
         filename = os.path.join(path, 'email_%03d.html' % e_id)
 
         if (os.path.exists(path)):
@@ -392,7 +392,7 @@ class PyMail:
             os.makedirs(path)
 
         with open(filename, 'w') as f:
-            
+
             page_1 = 'email_%03d.html' % 1
             page_n = 'email_%03d.html' % nEmails
             sts_1 = sts_n = ''
@@ -413,11 +413,11 @@ class PyMail:
 
             main = 'index.hml'
 
-            attachments = [] 
+            attachments = []
 
             for att in data['attachments']:
                 attachments.append('<a href="%s">%s</a>' % (email.attachs_path_[att], att))
-            
+
             subject = cgi.escape(data['Subject'])
             from_ = cgi.escape( data['From'] )
             to = cgi.escape(data['To'])
@@ -427,18 +427,18 @@ class PyMail:
             msg = data['msg']
 
             if (self.type_msg_ == "plain"):
-                msg = cgi.escape(msg)#.replace("\n", "<br>")
+                msg = cgi.escape(msg).replace("\n", "<br>")
 
-            h = html.format(e_id, nEmails, page_1, sts_1, page_b, sts_b, main, 
-                            page_a, sts_a, page_n, sts_n, 
+            h = html.format(e_id, nEmails, page_1, sts_1, page_b, sts_b, main,
+                            page_a, sts_a, page_n, sts_n,
                             unicode(subject,'utf-8').encode('ascii', 'xmlcharrefreplace'),
-                            from_, to, cc, bcc, attachs, 
+                            from_, to, cc, bcc, attachs,
                             unicode(msg,'utf-8').encode('ascii', 'xmlcharrefreplace'))
             f.write(h)
 
 
 if __name__ == '__main__':
-    
+
     print '='*70
     print '                   PyMail 0.1 <www.goo.gl/TDpSQC>'
     print '='*70
@@ -447,7 +447,7 @@ if __name__ == '__main__':
             ini_file = sys.argv[1]
 
         else:
-            print 
+            print
             print 'Arraste uma arquivo ".ini" para o este script.'
             print 'Exemplo:'
             print '  [Settings]'
@@ -458,7 +458,7 @@ if __name__ == '__main__':
 
             eg_file = "../examples/example_1/example_1.ini"
             run = raw_input('Run exemple "%s"? [Y/n] ' % eg_file)
-            
+
             ini_file = eg_file if (run != 'n') else None
 
         if (ini_file):
@@ -477,4 +477,3 @@ if __name__ == '__main__':
     finally:
         print '='*70
         raw_input('\nPress enter to close...')
-        

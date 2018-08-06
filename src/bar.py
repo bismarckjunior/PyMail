@@ -27,7 +27,7 @@ class ProgressBar:
 	def __init__(self, end=100, name='', width=50, init=True, perc=True):
 		"""
 		@brief   Constructs the object.
-		
+
 		@param   end    Maximum value of progress bar
 		@param   name   Name of progress bar
 		@param   width  With of progress bar
@@ -38,7 +38,7 @@ class ProgressBar:
 		self.name_ = name
 		self.perc_ = perc
 
-		
+
 		self.set_end(end)
 
 		if (init is True):
@@ -47,7 +47,7 @@ class ProgressBar:
 	def init_bar(self, end=None):
 		"""
 		@brief   Initialize progress bar.
-		
+
 		@param   end   Maximum value of progress bar
 		"""
 		if (end is not None):
@@ -56,8 +56,8 @@ class ProgressBar:
 
 	def reset_bar(self, end=None):
 		"""
-		@brief   Reset progress bar. 
-		
+		@brief   Reset progress bar.
+
 		@param   end   Maximum value of progress bar
 		"""
 		if (end is not None):
@@ -67,7 +67,7 @@ class ProgressBar:
 	def set_end(self, end):
 		"""
 		@brief   Change maximum value of progress bar.
-		
+
 		@param   end   Maximum value of progress bar
 		"""
 		if (end <= 0 ):
@@ -83,24 +83,24 @@ class ProgressBar:
 			self.fmt_bar_ = "{:s}[{:%ds}] {:%dd}/%d" % (self.wbar_, ndig, end)
 			self.len_detail_ = 2*ndig+1
 			self.__draw_bar = self.__draw_bar_number
-		
+
 		self.end_ = end
 
 	def update(self, pos):
 		"""
 		@brief   Update progress bar.
-		
+
 		@param   pos   Position in progress bar
 		"""
 		self.clear_bar()
 		if (pos < 0): pos = 0
 		if (pos > self.end_): pos = self.end_
 		self.__draw_bar(pos)
-		
+
 	def __draw_bar_perc(self, pos):
 		"""
 		@brief   Draw progress bar without cleaning.
-		
+
 		@param   pos   Position in progress bar
 		"""
 		frac = float(pos)/self.end_
@@ -122,11 +122,12 @@ class ProgressBar:
 
 if __name__ == '__main__':
 	import time
-	
+
 	n = 50
-	print 'ok',
 	pb = ProgressBar(n, name='Progresso: ')#, perc=False)
 	time.sleep(1)
 	for i in range(n+1):
 		pb.update(i)
 		time.sleep(0.1)
+
+	raw_input()
