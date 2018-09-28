@@ -78,7 +78,8 @@ class PyMail:
         email['From'] = self.username_
         email['To'] = to
         email['Subject'] = subject
-        email.attach(MIMEText(msg, self.type_msg_))
+
+        email.attach(MIMEText(msg, self.type_msg_, 'utf-8'))
 
         if cc: email['Cc'] = cc
         if bcc: email['Bcc'] = bcc
@@ -261,7 +262,7 @@ class PyMail:
             msg_keys = re.findall(r"\{\{(.+?)\}\}", msg)
             msg_fmt = re.sub(r"\{\{(.+?)\}\}", "%s", msg)
             body = msg_fmt % tuple([csv[key][i] for key in msg_keys])
-            email.attach(MIMEText(body, self.type_msg_))
+            email.attach(MIMEText(body, self.type_msg_, 'utf-8'))
 
             # Create html
             self.create_email_html(i+1, nEmails, email)
@@ -365,16 +366,16 @@ class PyMail:
 
         print
         print '='*80
-        print "{:12s} {:s}".format('From:', data['From'])
+        print u"{:12s} {:s}".format('From:', data['From'].decode('utf-8'))
         print "{:12s} {:s}".format('To:', data['To'])
-        print "{:12s} {:s}".format('Subject:', data['Subject'])
+        print u"{:12s} {:s}".format('Subject:', data['Subject'].decode('utf-8'))
         if data['Cc']: print "{:12s} {:s}".format('Cc:', data['Cc'])
         if data['Bcc']: print "{:12s} {:s}".format('Bcc:', data['Bcc'])
 
         if (data['attachments']):
             print "{:12s} {:s}".format('Attachments:', str(data['attachments']))
 
-        print "\n---\n\n%s\n" % data['msg']
+        print u"\n---\n\n%s\n" % data['msg'].decode('utf-8')
         print '='*80
         print
 
