@@ -26,7 +26,10 @@ from email.mime.multipart import MIMEMultipart
 from csv import read_csv, read_ini
 from bar import ProgressBar
 from myHtml import html
+import traceback
 
+class PyError(Exception):
+    pass
 
 class PyMail:
 
@@ -56,7 +59,7 @@ class PyMail:
 
         # Check domain
         if (domain not in self.smtp_):
-            raise Exception(37, "Invalid domain (%s)" % domain)
+            raise PyError(37, "Invalid domain (%s)" % domain)
 
         # Get smtp
         smtp = self.smtp_[domain]
@@ -116,13 +119,15 @@ class PyMail:
         try:
             cmd(*args, **kwargs)
 
-        except Exception as e:
-            n = e.args[0]
-            msg = e.args[1]
-            if (len(msg) > 40):
-                msg = msg[:40] + '...'
+        except PyError as e:
             if (self.output_):
-                print "[ERROR %d]: %s" % (n, msg)
+                print "[ERROR %d]: %s" % e.args
+            return False
+
+        except:
+            print "[ERROR]\n"
+            print sys.exc_info()[0]
+            print traceback.format_exc()
             return False
 
         else:
@@ -150,7 +155,7 @@ class PyMail:
         if (os.path.exists(full_path)):
             data = open(full_path, 'rb').read()
         else:
-            raise Exception(80, "No attachment found (%s)" % basename)
+            raise PyError(80, "No attachment found (%s)" % basename)
 
         # Attachs
         if (ext in self.extensions_['images']):
@@ -182,11 +187,11 @@ class PyMail:
         try:
             # Check recipient
             if (key_to not in csv):
-                raise Exception(116, "Column \"%s\" with e-mails not found" % key_to)
+                raise PyError(116, "Column \"%s\" with e-mails not found" % key_to)
 
             # Check subject
             if (subject is None and key_subject not in csv):
-                raise Exception(119, "Subject not defined")
+                raise PyError(119, "Subject not defined")
 
             # Create e-mails
             if (self.emails_ == []):
@@ -212,8 +217,20 @@ class PyMail:
             # Disconnect
             self.disconnect()
 
-        except Exception as e:
-            print "[ERROR %d]: %s" % e.args
+            return True
+
+        except PyError as e:
+            if (self.output_):
+                print "[ERROR %d]: %s" % e.args
+
+        except:
+            if (self.output_):
+                print "[ERROR]\n"
+
+                print sys.exc_info()[0]
+                print traceback.format_exc()
+
+        return False
 
     def create_emails(self, msg, csv, subject=None,
         key_to="E-mail", key_cc="Cc", key_bcc="Bcc",
