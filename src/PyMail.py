@@ -39,8 +39,9 @@ class PyMail:
     extensions_ = {'images': ['jpg', 'jpeg', 'png', 'gif']}
 
     def __init__(self, user, username=None, password=None, type_msg="plain",
-        output=True):
+        output=True, user2=None):
         self.user_ = user
+        self.user2_ = user2 if user2 else user
         self.password_ = password
         self.username_ = user if (username is None) else username
         self.type_msg_ = type_msg
@@ -78,7 +79,8 @@ class PyMail:
         msg, subject = self.get_msg_and_subject(msg, subject)
 
         email = MIMEMultipart()
-        email['From'] = self.username_
+        sender = "%s <%s>" % (self.username_, self.user2_)
+        email['From'] = sender
         email['To'] = to
         email['Subject'] = subject
 
@@ -252,7 +254,8 @@ class PyMail:
             to = csv[key_to][i]
 
             email = MIMEMultipart()
-            email['From'] = self.username_
+            sender = "%s <%s>" % (self.username_, self.user2_)
+            email['From'] = sender
             email['To'] = to
 
             # Subject
@@ -291,7 +294,8 @@ class PyMail:
         if (self.server_ is None):
             self.show_email_cmd(email)
         else:
-            self.server_.sendmail(self.username_, email['To'], email.as_string())
+            sender = "%s <%s>" % (self.username_, self.user2_)
+            self.server_.sendmail(sender, email['To'], email.as_string())
 
     def get_data_from_email(self, email):
         data = { 'Subject': email['Subject'],
@@ -299,10 +303,10 @@ class PyMail:
                  'Cc':      email['Cc'] if email['Cc'] else '',
                  'Bcc':     email['Bcc'] if email['Bcc'] else ''}
 
-        if (self.user_ == self.username_):
+        if (self.user2_ == self.username_):
             data['From'] = email['From']
         else:
-            data['From'] = "%s <%s>" % (self.username_, self.user_)
+            data['From'] = "%s <%s>" % (self.username_, self.user2_)
 
         data['msg'] = ''
         data['attachments'] = []
@@ -485,7 +489,12 @@ if __name__ == '__main__':
             pwd = d['password'] if 'password' in d else None
             mail = PyMail(d['user'], d['username'], pwd)
             mail.set_path(os.path.dirname(ini_file))
-            mail.send_mass_email(d['msg_file'], d['csv_file'], verify=True)
+
+            if ('csv_file' in d):
+                mail.send_mass_email(d['msg_file'], d['csv_file'], verify=True)
+            else:
+                mail.connect()
+                mail.send_email(d['to'], d['msg_txt'], d['subject'])
 
     except:
         print sys.exc_info()[0]

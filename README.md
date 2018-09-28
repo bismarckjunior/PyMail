@@ -1,8 +1,8 @@
 # [![PyMail](imgs/pymail_logo.png)][1] PyMail
 
-Programa totalmente desenvolvido em Python 2.7.x destinado ao envio de 
-mala direta digital. Ou seja, o envio personalizado de e-mails 
-padronizados e para um grande número de pessoas, podendo anexar 
+Programa totalmente desenvolvido em Python 2.7.x destinado ao envio de
+mala direta digital. Ou seja, o envio personalizado de e-mails
+padronizados e para um grande número de pessoas, podendo anexar
 diferentes arquivos para cada destinatário.
 
 <p align="center">
@@ -13,7 +13,7 @@ diferentes arquivos para cada destinatário.
 
 O usuário cria uma planilha com as informações de cada destinatário, um
 arquivo com o corpo do e-mail a ser enviado e um arquivo *\*.ini* que
-contém as informações básicas para o envio. Ao arrastar o arquivo 
+contém as informações básicas para o envio. Ao arrastar o arquivo
 *\*.ini* para o arquivo *PyMail.py* o programa é inicializado, gerando
 uma página *html* para a visualização dos e-mails criados.
 
@@ -22,13 +22,13 @@ digitando a senha da conta de e-mail, caso esta não esteja salva. Durante o
 envio dos e-mails é exibido uma barra de progresso. Ao enviar todos os e-mails
 criados, o programa é finalizado.
 
-O PyMaill também pode ser utilizado como um módulo Python, podendo ser 
+O PyMaill também pode ser utilizado como um módulo Python, podendo ser
 incorporado em códigos pessoais ou em projetos maiores.
 
 
 ## 1. Instalação
 
-A instalação do PyMail tem como dependência o Python 2.7.x. A sua 
+A instalação do PyMail tem como dependência o Python 2.7.x. A sua
 instalação resume-se ao download do projeto que pode ser realizado através
 do botão [**Download**][2] ou utilizando o comando git:
 
@@ -61,7 +61,7 @@ Em seguida, executar o script *PyMail.py* seguido do arquivo de inicialização:
     $ python PyMail.py ../examples/example_1/example_1.ini
 
 Ao realizar o comando acima, o PyMail entra em execução, exibindo o cabeçalho
-do programa e iniciando o verificador de e-mails. 
+do programa e iniciando o verificador de e-mails.
 
 
 | ![Terminal](imgs/pymail_console_ini.png) |
@@ -88,17 +88,17 @@ Abaixo está ilustrado um exemplo de execução completa do programa.
 
 ### 2.2. Arrastando e Soltando
 
-A execução através do processo de arrastar o arquivo *\*.ini* e soltar sobre 
-o arquivo *PyMail.py* depende do sistema operacional. E é uma alternativa à 
-execução via terminal, realizando os mesmos passos desta: exibe o cabeçalho, 
+A execução através do processo de arrastar o arquivo *\*.ini* e soltar sobre
+o arquivo *PyMail.py* depende do sistema operacional. E é uma alternativa à
+execução via terminal, realizando os mesmos passos desta: exibe o cabeçalho,
 inicia o verificador de e-mails, envia os e-mails e finaliza o programa.
 
 #### Windows
 
-Para executar o simulador arrastando e soltando, no Windows, basta arrastar o 
+Para executar o simulador arrastando e soltando, no Windows, basta arrastar o
 arquivo de entrada *\*.ini* para o script *PyMail.py*.
 
-Caso o Windows não permita soltar um arquivo sobre um arquivo *\*.py*, é 
+Caso o Windows não permita soltar um arquivo sobre um arquivo *\*.py*, é
 necessário alterar algumas variáveis de registro do Windows. Para isso, faça
 o download do arquivo [Python27.reg](files/Python27.reg), salve com a extensão
  *\*.reg* e execute-o.
@@ -121,15 +121,15 @@ Exec=sh -e -c "exec python \\"\\$(dirname \\"\\$0\\")/PyMail.py\\" \\$1" %k %u
 Em seguida, deve-se tornar o script *PyMail.py* e o arquivo *PyMail.desktop*
 executáveis, realizando o comando:
 
-	$ chmod +x PyMail.* 
+	$ chmod +x PyMail.*
 
-Finalmente, basta arrastar o arquivo de entrada (*\*.ini*) e soltar sobre o 
+Finalmente, basta arrastar o arquivo de entrada (*\*.ini*) e soltar sobre o
 arquivo *PyMail.desktop*.
 
 ### 2.3. Criando Scripts
 
-O PyMail também pode ser utilizado como um módulo Python, podendo ser 
-incorporado em programas ou scripts desenvolvidos pelo usuário. Para isso, 
+O PyMail também pode ser utilizado como um módulo Python, podendo ser
+incorporado em programas ou scripts desenvolvidos pelo usuário. Para isso,
 basta colocar a pasta do projeto PyMail no mesmo local do script e importar o
 módulo PyMail.
 
@@ -163,25 +163,41 @@ mail.send_mail(to="teste1@pymail.com",  # Destinatário
 ## 3. Tipos de Arquivos
 
 Os principais tipos de arquivos que o PyMail utiliza são: (1) arquivos de
-inicialização (*\*.ini*); (2) arquivos de informações dos destinatários 
+inicialização (*\*.ini*); (2) arquivos de informações dos destinatários
 (*\*.csv*); e (3) arquivos de mensagem (*\*.txt* e *\*.html*).
 
-### 3.1. Arquivo INI 
+### 3.1. Arquivo INI
 
-O arquivo *\*.ini* possui as informações básicas para o envio dos e-mails 
-em massa: (1) e-mail do remetente; (2) arquivo (*\*.txt* ou *\*.html*) com 
-o corpo do e-mail; (3) arquivo (*\*.csv*) com os dados dos destinatários; e 
-(4) a senha necessária para logar na conta de e-mail. A senha é uma informação
-opcional e caso não seja informada será requisitada no momento do envio dos 
+O arquivo *\*.ini* possui as informações básicas para o envio dos e-mails
+em massa: (1) e-mail do remetente; (2) nome do remetente; (3) arquivo (*\*.txt* ou *\*.html*) com
+o corpo do e-mail; (4) arquivo (*\*.csv*) com os dados dos destinatários; e
+(5) a senha necessária para logar na conta de e-mail. A senha é uma informação
+opcional e caso não seja informada será requisitada no momento do envio dos
 e-mails.
 
-Um exemplo de arquivo *\*.ini* é o arquivo 
+Um exemplo de arquivo *\*.ini* é o arquivo
 [example_1.ini](examples/example_1/example_1.ini):
 
-```text 
+```text
 [Settings]
-user     = "pymail@gmail.com"   # E-mail do remetente 
-username = "PyMail"             # Nome do remetente
+user     = "pymail@gmail.com"   # E-mail do remetente
+username = "PyMail"             # Nome do remetente.
+msg_file = "example_1.txt"      # Arquivo com o corpo do e-mail
+csv_file = "example_1.csv"      # Arquivo com os dados dos destinatários
+password = "1234#"              # [Opcional] Senha da conta do e-mail
+```
+
+Caso o e-mail tenha uma segunda conta de e-mail associada,
+é possível o envio de e-mail através desta. Por exemplo, se a conta pymail@gmail.com
+adicionou a conta pymail@pymail.com como usuário secundário, é possível enviar
+e-mail pela segunda conta. Para isso, basta especificar o e-mail do remetente
+no campo "user2". Neste caso, teríamos:
+
+```text
+[Settings]
+user     = "pymail@gmail.com"   # E-mail da conta principal
+user2    = "pymail@pymail.com"  # E-mail do remetente
+username = "PyMail"             # Nome do remetente.
 msg_file = "example_1.txt"      # Arquivo com o corpo do e-mail
 csv_file = "example_1.csv"      # Arquivo com os dados dos destinatários
 password = "1234#"              # [Opcional] Senha da conta do e-mail
@@ -190,24 +206,24 @@ password = "1234#"              # [Opcional] Senha da conta do e-mail
 ### 3.2. Arquivo CSV
 
 O arquivo *\*.csv* contém as informações dos destinatários. Este arquivo
-é uma planilha na qual as colunas são delimitadas pelo caractere <kbd>;</kbd>. 
-Na primeira linha é inserido as palavras-chave que são utilizadas para 
+é uma planilha na qual as colunas são delimitadas pelo caractere <kbd>;</kbd>.
+Na primeira linha é inserido as palavras-chave que são utilizadas para
 personalizar cada e-mail e nas linhas seguintes, para cada coluna, seus
-respectivos valores. Os arquivos *\*.csv* são facilmente editáveis por 
-editores de planilha eletrônica como o Excel (Microsoft Office) e o Calc 
+respectivos valores. Os arquivos *\*.csv* são facilmente editáveis por
+editores de planilha eletrônica como o Excel (Microsoft Office) e o Calc
 (Libreoffice).
 
-Abaixo está exemplificada uma planilha com as palavras-chave "E-mail", 
+Abaixo está exemplificada uma planilha com as palavras-chave "E-mail",
 "Cc", "Equipe", "Data" e "Unidade" com os valores preenchidos:
 
 | E-mail            | Cc                | Equipe             | Data       | Unidade  |
-| ----------------- | ----------------- | ------------------ | ---------- | -------- |   
+| ----------------- | ----------------- | ------------------ | ---------- | -------- |
 | teste1@pymail.com | suporte@pymail.com| Segue em Frente    | 11/02/2019 | Botafogo |
 | teste2@pymail.com | suporte@pymail.com| Concentração Total | 22/09/2018 | Gávea    |
 | teste3@pymail.com | suporte@pymail.com| Atitude Pura       | 04/07/2019 | Flamento |
 | teste4@pymail.com | suporte@pymail.com| Força e Foco       | 17/08/2018 | Tijuca   |
 
-Esta planilha é representada pelo arquivo 
+Esta planilha é representada pelo arquivo
 [example_2.csv](examples/example_2/example_2.csv), dado por:
 
 ```text
@@ -218,8 +234,8 @@ teste3@pymail.com;suporte@pymail.com;Atitude Pura;04/07/2019;"Flamento"
 teste4@pymail.com;suporte@pymail.com;Força e Foco;17/08/2018;"Tijuca"
 ```
 
-Nesta planilha, foram utilizadas algumas palavras-chave pré-definidas e 
-outras personalizadas (ex: "Equipe", "Data" e "Unidade"), ou seja, 
+Nesta planilha, foram utilizadas algumas palavras-chave pré-definidas e
+outras personalizadas (ex: "Equipe", "Data" e "Unidade"), ou seja,
 criada pelo usuário.
 
 As palavras-chave pré-definidas estão expostas na tabela abaixo onde apenas
@@ -262,9 +278,9 @@ Este arquivo em uma visualização em forma de tabela seria:
 
 ### 3.3. Arquivo TXT e HTML
 
-O corpo do e-mail a ser enviado deve ser escrito em um arquivo *\*.txt*, 
+O corpo do e-mail a ser enviado deve ser escrito em um arquivo *\*.txt*,
 para o uso de texto sem formatação, ou *\*.html*, no qual as funcionalidades
-*html* estarão disponíveis. Nestes arquivos, o uso das palavras-chave 
+*html* estarão disponíveis. Nestes arquivos, o uso das palavras-chave
 delimitado pelos caracteres <kbd>{{</kbd> e <kbd>}}</kbd> substitui a palavra-chave pelo
 respectivo valor na planilha de informações (arquivo *\*.csv*).
 
@@ -277,13 +293,13 @@ Prezad{{Nome(Artigo)}} {{Nome}},
   Você já possui {{Valor}} na sua conta e deve retirá-lo até o dia {{Retirada}}.
 
   Segue em anexo o seu extrato.
-  
+
 At.te,
 PyMail
 ```
 
-Este texto será substituído pelas palavras-chave do arquivo 
-[example_1.csv](examples/example_1/example_1.csv). Por exemplo, para o 
+Este texto será substituído pelas palavras-chave do arquivo
+[example_1.csv](examples/example_1/example_1.csv). Por exemplo, para o
 primeiro destinatário, a mensagem seria:
 
 ```text
@@ -292,7 +308,7 @@ Prezado Eduardo,
   Você já possui R$ 2200,00 na sua conta e deve retirá-lo até o dia 11/02/2019.
 
   Segue em anexo o seu extrato.
-  
+
 At.te,
 PyMail
 ```
@@ -302,7 +318,7 @@ Também é possível inserir o assunto do e-mail na primeira linha do arquivo
 forma, é possível personalizar o assunto do e-mail com as informações na
 planilha de informações (arquivo *\*.csv*).
 
-Um exemplo de arquivo *\*.txt*, contendo o assunto e o corpo do e-mail, 
+Um exemplo de arquivo *\*.txt*, contendo o assunto e o corpo do e-mail,
 é o arquivo [example_2.txt](examples/example_2/example_2.txt):
 
 ```text
@@ -310,7 +326,7 @@ Subject: Equipe {{Equipe}} - Apresente-se!
 
 Prezada Equipe {{Equipe}},
 
-Já chegou o tão esperado momento. 
+Já chegou o tão esperado momento.
 
 Pedimos para que se apresentem no dia {{Data}} na unidade {{Unidade}}.
 
@@ -319,7 +335,7 @@ PyMail
 ```
 
 Outra possibilidade é o uso de comandos *html* no corpo do e-mail. Para isso,
-ao invés de um arquivo *\*.txt* deve-se utilizar um arquivo *\*.html*. 
+ao invés de um arquivo *\*.txt* deve-se utilizar um arquivo *\*.html*.
 
 Um exemplo de arquivo *\*.html* é o arquivo
 [example_3.html](examples/example_3/example_3.html):
@@ -343,8 +359,8 @@ Abraços, <br>
 PyMail
 ```
 
-Este texto será substituído pelas palavras-chave do arquivo 
-[example_3.csv](examples/example_3/example_3.csv). Por exemplo, para o 
+Este texto será substituído pelas palavras-chave do arquivo
+[example_3.csv](examples/example_3/example_3.csv). Por exemplo, para o
 primeiro destinatário, a mensagem seria:
 
 ***
@@ -368,7 +384,7 @@ PyMail
 ***
 
 Para poder visualizar os e-mails na forma como serão enviados, existe a
-possibilidade de usar o verificador de e-mails. Que será discutido na 
+possibilidade de usar o verificador de e-mails. Que será discutido na
 próxima seção.
 
 
