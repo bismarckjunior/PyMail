@@ -303,11 +303,7 @@ class PyMail:
                  'Cc':      email['Cc'] if email['Cc'] else '',
                  'Bcc':     email['Bcc'] if email['Bcc'] else ''}
 
-        if (self.user2_ == self.username_):
-            data['From'] = email['From']
-        else:
-            data['From'] = "%s <%s>" % (self.username_, self.user2_)
-
+        data['From'] = email['From']
         data['msg'] = ''
         data['attachments'] = []
 
@@ -319,7 +315,7 @@ class PyMail:
             for i, line in enumerate(lines):
                 if (':' in line):
                     k,v = line.split(':')
-                    d[k] = v
+                    d[k] = v.strip()
                 else:
                     d['data'] = '\n'.join(lines[i+1:])
                     break
@@ -331,7 +327,10 @@ class PyMail:
             ctype = piece['Content-Type']
 
             if ('text/' in ctype):
-                data['msg'] += piece['data']
+                msg = piece['data']
+                if (piece.get('Content-Transfer-Encoding', '') == 'base64'):
+                    msg = msg.decode('base64')
+                data['msg'] += msg
 
             if ('image/' in  ctype):
                 attach = ctype[ctype.find("e=")+3:-1]
