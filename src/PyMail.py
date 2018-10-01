@@ -34,8 +34,8 @@ class PyError(Exception):
 class PyMail:
 
     smtp_ = { 'gmail':   {'port': 587, 'host':"smtp.gmail.com"},
-              'outlook': {'port': 587, 'host':"smtp-mail.outlook.com"},
-              'pymail':  {'port': 587, 'host':"smtp.pymail.com"}}
+              'outlook': {'port': 587, 'host':"smtp-mail.outlook.com"}
+            }
     extensions_ = {'images': ['jpg', 'jpeg', 'png', 'gif']}
 
     def __init__(self, user, username=None, password=None, type_msg="plain",
@@ -60,7 +60,7 @@ class PyMail:
 
         # Check domain
         if (domain not in self.smtp_):
-            raise PyError(37, "Invalid domain (%s)" % domain)
+            raise PyError(37, "Invalid domain (%s) or e-mail" % domain)
 
         # Get smtp
         smtp = self.smtp_[domain]
