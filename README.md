@@ -197,10 +197,9 @@ no campo "user2". Neste caso, teríamos:
 [Settings]
 user     = "pymail@gmail.com"   # E-mail da conta principal
 user2    = "pymail@pymail.com"  # E-mail do remetente
-username = "PyMail"             # Nome do remetente.
-msg_file = "example_1.txt"      # Arquivo com o corpo do e-mail
-csv_file = "example_1.csv"      # Arquivo com os dados dos destinatários
-password = "1234#"              # [Opcional] Senha da conta do e-mail
+username = "PyMail"             # Nome do remetente
+msg_file = "example_2.txt"      # Arquivo com o corpo do e-mail
+csv_file = "example_2.csv"      # Arquivo com os dados dos destinatários
 ```
 
 ### 3.2. Arquivo CSV
