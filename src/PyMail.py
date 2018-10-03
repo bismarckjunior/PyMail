@@ -23,7 +23,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
-from csv import read_csv, read_ini
+from read_data import read_file_as_dict
 from bar import ProgressBar
 from myHtml import html
 import traceback
@@ -184,7 +184,7 @@ class PyMail:
         key_subject="Subject", key_attach="Attachments", verify=False):
 
         msg, subject = self.get_msg_and_subject(msg, subject)
-        csv = read_csv(os.path.join(self.path_, csv_file))
+        csv = read_file_as_dict(os.path.join(self.path_, csv_file))
 
         try:
             # Check recipient
@@ -483,7 +483,7 @@ if __name__ == '__main__':
             ini_file = eg_file if (run != 'n') else None
 
         if (ini_file):
-            ini = read_ini(ini_file)
+            ini = read_file_as_dict(ini_file)
             d = ini['Settings']
             pwd = d['password'] if 'password' in d else None
             mail = PyMail(d['user'], d['username'], pwd)
@@ -492,7 +492,7 @@ if __name__ == '__main__':
             if ('csv_file' in d):
                 mail.send_mass_email(d['msg_file'], d['csv_file'], verify=True)
             else:
-                mail.connect()
+                # mail.connect()
                 mail.send_email(d['to'], d['msg_txt'], d['subject'])
 
     except:
