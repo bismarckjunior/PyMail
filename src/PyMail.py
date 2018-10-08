@@ -295,7 +295,14 @@ class PyMail:
             self.show_email_cmd(email)
         else:
             sender = "%s <%s>" % (self.username_, self.user2_)
-            self.server_.sendmail(sender, email['To'], email.as_string())
+            to = [email['To']]
+            if email['Cc'] is not None:
+                to += email['Cc'].replace(',',';').split(';')
+
+            if email['Bcc'] is not None:
+                to += email['Bcc'].replace(',',';').split(';')
+
+            self.server_.sendmail(sender, to, email.as_string())
 
     def get_data_from_email(self, email):
         data = { 'Subject': email['Subject'],
