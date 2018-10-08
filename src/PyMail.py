@@ -151,13 +151,13 @@ class PyMail:
     def attach_to_email(self, email, filename):
         ext = filename[filename.rfind('.')+1:]
         basename = os.path.basename(filename)
-        full_path = os.path.join(self.path_, filename)
+        full_path = os.path.join(self.path_, filename.strip())
 
         # Check attachment
         if (os.path.exists(full_path)):
             data = open(full_path, 'rb').read()
         else:
-            raise PyError(80, "No attachment found (%s)" % basename)
+            raise PyError(80, "No attachment found (%s)\n\nPath: %s" % (basename, full_path))
 
         # Attachs
         if (ext in self.extensions_['images']):
@@ -312,13 +312,17 @@ class PyMail:
         for piece in ('\n'+email.as_string()).split("--=========="):
             d = {}
             lines = piece.split('\n')[1:-1]
+
             for i, line in enumerate(lines):
                 if (':' in line):
                     k,v = line.split(':')
                     d[k] = v.strip()
-                else:
+
+                elif line == '':
                     d['data'] = '\n'.join(lines[i+1:])
                     break
+                else:
+                    d[k] += '\n' + line
             if d:
                 pieces.append(d)
 
