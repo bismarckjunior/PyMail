@@ -39,9 +39,9 @@ class PyMail:
     extensions_ = {'images': ['jpg', 'jpeg', 'png', 'gif']}
 
     def __init__(self, user, username=None, password=None, type_msg="plain",
-        output=True, user2=None):
+        output=True, user_sender=None):
         self.user_ = user
-        self.user2_ = user2 if user2 else user
+        self.user_sender_ = user if (user_sender is None) else user_sender
         self.password_ = password
         self.username_ = user if (username is None) else username
         self.type_msg_ = type_msg
@@ -49,6 +49,11 @@ class PyMail:
         self.emails_ = []
         self.output_ = output
         self.set_path("./")
+
+        if (username is None):
+            self.sender_ = self.user_sender_
+        else:
+            self.sender_ = "%s <%s>" % (username, self.user_sender_)
 
     def __del__(self):
         if (self.server_ is not None):
@@ -79,8 +84,7 @@ class PyMail:
         msg, subject = self.get_msg_and_subject(msg, subject)
 
         email = MIMEMultipart()
-        sender = "%s <%s>" % (self.username_, self.user2_)
-        email['From'] = sender
+        email['From'] = self.sender_
         email['To'] = to
         email['Subject'] = subject
 
@@ -254,8 +258,7 @@ class PyMail:
             to = csv[key_to][i]
 
             email = MIMEMultipart()
-            sender = "%s <%s>" % (self.username_, self.user2_)
-            email['From'] = sender
+            email['From'] = self.sender_
             email['To'] = to
 
             # Subject
@@ -294,7 +297,6 @@ class PyMail:
         if (self.server_ is None):
             self.show_email_cmd(email)
         else:
-            sender = "%s <%s>" % (self.username_, self.user2_)
             to = [email['To']]
             if email['Cc'] is not None:
                 to += email['Cc'].replace(',',';').split(';')
@@ -302,7 +304,7 @@ class PyMail:
             if email['Bcc'] is not None:
                 to += email['Bcc'].replace(',',';').split(';')
 
-            self.server_.sendmail(sender, to, email.as_string())
+            self.server_.sendmail(self.user_sender_, to, email.as_string())
 
     def get_data_from_email(self, email):
         data = { 'Subject': email['Subject'],
@@ -497,7 +499,9 @@ if __name__ == '__main__':
             ini = read_file_as_dict(ini_file)
             d = ini['Settings']
             pwd = d['password'] if 'password' in d else None
-            mail = PyMail(d['user'], d['username'], pwd)
+            mail = PyMail(d['user'], d.get('username',None),
+                          d.get('password', None),
+                          user_sender=d.get('user2', None))
             mail.set_path(os.path.dirname(ini_file))
 
             if ('csv_file' in d):
