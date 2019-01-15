@@ -17,8 +17,7 @@ limitations under the License.
 Author: Bismarck Gomes Souza Junior <bismarckgomes@gmail.com>
 About:  Class for sending bulk e-mails
 """
-import os, re, sys, cgi, webbrowser
-from smtplib import SMTP
+import os, re, sys, cgi, webbrowser, smtplib, time, traceback
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
@@ -26,7 +25,8 @@ from email.mime.multipart import MIMEMultipart
 from read_data import read_file_as_dict
 from bar import ProgressBar
 from myHtml import html
-import traceback
+import pickle as pk
+
 
 class PyError(Exception):
     pass
@@ -71,7 +71,7 @@ class PyMail:
         smtp = self.smtp_[domain]
 
         # Initialize server
-        self.server_ = SMTP(smtp["host"], smtp["port"])
+        self.server_ = smtplib.SMTP(smtp["host"], smtp["port"])
         self.server_.ehlo()
         self.server_.starttls()
         self.server_.ehlo()
@@ -103,11 +103,65 @@ class PyMail:
 
         # Creating progress bar
         nEmails = len(self.emails_)
-        bar = ProgressBar(nEmails, name=' Sending...       ', width=30, perc=False)
+        bar = ProgressBar(nEmails, name=' Sending...       ', width=40, perc=False)
 
         # Send e-mail
         for i, email in enumerate(self.emails_):
-            self.submmit_email(email)
+
+            try:
+                self.submmit_email(email)
+
+            except smtplib.SMTPServerDisconnected as e:
+                print "\n\n [ERROR]: %s\n" % e.args[0]
+
+                cont = 1
+                self.output_ = False
+                t1 = time.time()
+
+                while (True):
+                    print '\b'*50,
+                    print 'Reconnecting...  [%d]' % cont,
+
+                    cont2 = 1
+                    while (not self.connect()):
+                        print '.',
+                        sleep(cont2)
+                        cont2 *= 2
+
+                    try:
+                        self.submmit_email(email)
+
+                    except smtplib.SMTPServerDisconnected:
+                        time.sleep(1)
+
+                    except:
+                        print "\n\n [ERROR]\n"
+                        print sys.exc_info()[0]
+                        print traceback.format_exc()
+                        print
+
+                    else:
+                        break
+
+                    cont +=1
+
+                print time.strftime("in %M m %S s", time.gmtime(time.time()-t1))
+                self.output_ = True
+
+            except smtplib.SMTPDataError as e:
+                print "\n\n [ERROR %d]: %s" % e.args
+
+                self.backup_email_index(i, nEmails)
+                return
+
+            except:
+                print "\n\n [ERROR]\n"
+                print sys.exc_info()[0]
+                print traceback.format_exc()
+                print
+
+                self.backup_email_index(i, nEmails)
+                return
 
             # Update progress bar
             bar.update(i+1)
@@ -117,6 +171,7 @@ class PyMail:
     def set_path(self, path):
         self.path_ = path
         self.path_emails_ = os.path.join(path, 'html')
+        self.path_bkp_ = os.path.join(path, 'backup.pymail')
 
     def run(self, status, cmd, *args, **kwargs):
         if (self.output_):
@@ -126,6 +181,11 @@ class PyMail:
             cmd(*args, **kwargs)
 
         except PyError as e:
+            if (self.output_):
+                print "[ERROR %d]: %s" % e.args
+            return False
+
+        except smtplib.SMTPAuthenticationError as e:
             if (self.output_):
                 print "[ERROR %d]: %s" % e.args
             return False
@@ -144,7 +204,7 @@ class PyMail:
 
     def disconnect(self):
 
-        self.run("Disconnecting...", self.__disconnect)
+        self.run("\n Disconnecting...", self.__disconnect)
 
     def connect(self):
         if (self.output_):
@@ -209,7 +269,7 @@ class PyMail:
                 webbrowser.open(os.path.join(self.path_emails_, 'email_001.html'))
 
                 # Continue?
-                if ( raw_input('\nDo you want to send created e-mails? [y/N] ') != 'y' ):
+                if ( raw_input('\n Do you want to send created e-mails? [y/N] ') != 'y' ):
                     print '\nAborted!'
                     return
 
@@ -238,10 +298,39 @@ class PyMail:
 
         return False
 
+    def get_first_email_index(self):
+
+        if (os.path.exists(self.path_bkp_)):
+            with open(self.path_bkp_, 'rb') as f:
+                if ( self.hash_ == pk.load(f) ):
+
+                    index, total = pk.load(f)
+
+                    print '\n The last session got an error.',
+                    print 'Just sent %d of %d e-mails.\n' % (index, total)
+                    print ' Do you want to continue the last session and send',
+                    if (raw_input('%d e-mails? [Y/n]' % (total - index)) != 'n'):
+                        return index
+
+        return 0
+
+    def __backup_email_index(self, index, total):
+
+        with open(self.path_bkp_, 'wb') as f:
+            pk.dump(self.hash_, f)
+            pk.dump((index, total), f)
+
+        return True
+
+    def backup_email_index(self, index, total):
+
+        self.run("\n Backuping up... ", self.__backup_email_index, index, total)
+
     def create_emails(self, msg, csv, subject=None,
         key_to="E-mail", key_cc="Cc", key_bcc="Bcc",
         key_subject="Subject", key_attach="Attachments"):
 
+        self.hash_ = [msg, csv, subject]
         self.emails_ = []
 
         # Check subject
@@ -254,7 +343,7 @@ class PyMail:
         nEmails = len(csv.values()[0])
 
         # Creating e-mails
-        for i in range(nEmails):
+        for i in range(self.get_first_email_index(), nEmails):
             to = csv[key_to][i]
 
             email = MIMEMultipart()
@@ -292,6 +381,7 @@ class PyMail:
 
             # Append e-mail
             self.emails_.append(email)
+
 
     def submmit_email(self, email):
         if (self.server_ is None):
@@ -474,7 +564,7 @@ class PyMail:
 if __name__ == '__main__':
 
     print '='*70
-    print '                   PyMail 0.1 <www.goo.gl/TDpSQC>'
+    print '                   PyMail 0.2 <www.goo.gl/TDpSQC>'
     print '='*70
     try:
         if len(sys.argv) > 1:
